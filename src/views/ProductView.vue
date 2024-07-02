@@ -112,6 +112,35 @@ onMounted(async () => {
   margin: 1vw;
 }
 
+.category {
+  position: relative;
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
+  padding-bottom: 3px;
+}
+
+.category::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #7A7A7A;
+  transform-origin: left;
+  /* 添加過渡效果 */
+  transition: transform 0.3s ease, width 0.3s ease;
+}
+
+.category:hover::before {
+  /* 滑鼠懸停時顯示完整的底線效果 */
+  transform: scaleX(1);
+  /* 讓底線逐漸擴展到100%寬度 */
+  width: 100%;
+}
+
+
 .stateBox {
   display: flex;
   width: 100%;
@@ -159,10 +188,11 @@ onMounted(async () => {
 }
 
 h2 {
+  font-size: 1.5vw;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
   /* 顯示的行數 */
+  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
@@ -184,6 +214,12 @@ img {
   margin: 1vw;
   flex-direction: column;
   align-items: center;
+  /* 添加過渡效果 */
+  transition: box-shadow 0.3s ease;
+}
+
+.shopprods:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .detail {
