@@ -1,39 +1,16 @@
-# shoppingcart
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+## 實作方式
+ - 使用 VueJs 3 進行前端開發
+ - 使用 npm 進行編譯和打包
+ - 使用 GitHub 進行版本控制和協作
+## 功能特點
+ - 商品列表清單
+ - 購物車清單
+## 操作
+ - 加入購物車
+ - 購物車商品數量增減
+ - 刪除購物車中的商品
+## 其他
+ - Composition API
+ - Pinia
+## 網頁展示
+<https://wanuii.github.io/>
