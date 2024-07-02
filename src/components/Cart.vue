@@ -30,7 +30,6 @@ const reduce = (prod: { ID: number; quantity: number }) => {
                     <h2 class="quantity-product">{{ prod.quantity }}</h2>
                     <button @click="add(prod)" class="quantity-btn">+</button>
                 </div>
-                <!-- <h2>{{ prod.quantity }}</h2> -->
                 <h2 :style="{ color: 'red' }">NT$ {{ (Number(prod.Price) * prod.quantity).toFixed(2) }}</h2>
                 <button class="btn" @click='cartstore.deletePro(prod)'>刪除</button>
             </div>
@@ -60,7 +59,6 @@ const reduce = (prod: { ID: number; quantity: number }) => {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    /* justify-content: start; */
     box-shadow: 0 6px 12px #7A7A7A;
 }
 
@@ -82,8 +80,8 @@ h2 {
     width: 10vw;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
     /* 顯示的行數 */
+    -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
