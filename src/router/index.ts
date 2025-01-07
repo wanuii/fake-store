@@ -4,7 +4,7 @@ import ProductDetial from '../views/ProductDetail.vue'
 import ShoppingCart from '../components/Cart.vue'
 
 const router = createRouter({
-  history: createWebHistory('/project-name/'),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
