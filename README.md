@@ -1,7 +1,7 @@
 ## 實作方式
  - 使用 VueJs 3 進行前端開發
  - 使用 npm 進行編譯和打包
- - 使用 GitHub 進行版本控制和協作
+ - 使用 pinia 進行狀態管理
 ## 功能特點
  - 商品列表清單
  - 購物車清單
@@ -11,6 +11,7 @@
  - 刪除購物車中的商品
 ## 其他
  - Composition API
- - Pinia
+## 說明
+ - 使用指令 npm run dev 來開啟專案
 ## 網頁展示
 <https://wanuii.github.io/>
