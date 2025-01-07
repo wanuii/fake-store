@@ -11,7 +11,7 @@ export default defineConfig({
   base: '/shoppingcart/',
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./shoppingcart/src', import.meta.url))
     }
   }
 })
