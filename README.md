@@ -14,4 +14,4 @@
 ## 說明
  - 使用指令 npm run dev 來開啟專案
 ## 網頁展示
-<https://wanuii.github.io/>
+<https://wanuii.github.io/shopping-cart/>
