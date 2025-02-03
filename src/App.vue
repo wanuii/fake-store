@@ -5,5 +5,13 @@ import Navbar from '@/components/Navbar.vue'
 
 <template>
   <Navbar />
-  <RouterView />
+  <div class="router-view-wrapper">
+    <RouterView />
+  </div>
 </template>
+<style>
+.router-view-wrapper {
+  padding-top: 60px;
+  /* 根據 Navbar 高度設定 */
+}
+</style>

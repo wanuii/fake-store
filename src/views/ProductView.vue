@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import SuccessNoti from '../components/SuccessNoti.vue'
 // ============== 變數存放區 ==============
+const loading = ref(true)
 // 放置查到的資料內容
 const shopprods = ref<Array<{ Title: string; Price: number; Images: string; ID: number; Description: string; }>>([]);
 const detial = ref(false) // 判斷是否開啟商品詳細
@@ -33,6 +34,8 @@ const onSearch = async (state: string) => {
     }
   } catch (err) {
     console.log('error', err);
+  } finally {
+    loading.value = false
   }
 }
 // 商品分類
@@ -79,22 +82,24 @@ onMounted(async () => {
       <ProductDetail :product="selectedProduct" @change-dialog-state="changeDialogState" />
     </div>
   </div>
-  <div class="categoryBox">
-    <div class="category" v-for="(category, index) in categories" :key="index" @click="onCategoryClick(category)">
-      {{ category }}
+  <div v-loading="loading">
+    <div class="categoryBox">
+      <div class="category" v-for="(category, index) in categories" :key="index" @click="onCategoryClick(category)">
+        {{ category }}
+      </div>
     </div>
-  </div>
-  <div class="stateBox">
-    <div class="state">
-      {{ state }}
+    <div class="stateBox">
+      <div class="state">
+        {{ state }}
+      </div>
     </div>
-  </div>
-  <div class='content'>
-    <div class='shopprods' v-for="(prod, index) in shopprods" :key="index" @click="ChooseProduct(prod)">
-      <img :src="prod.Images">
-      <div class='detail'>
-        <h2>{{ prod.Title }}</h2>
-        <h2>NT$ {{ prod.Price }}</h2>
+    <div class='content'>
+      <div class='shopprods' v-for="(prod, index) in shopprods" :key="index" @click="ChooseProduct(prod)">
+        <img :src="prod.Images">
+        <div class='detail'>
+          <h2>{{ prod.Title }}</h2>
+          <h2>NT$ {{ prod.Price }}</h2>
+        </div>
       </div>
     </div>
   </div>
@@ -164,7 +169,7 @@ onMounted(async () => {
 .viewBox {
   display: flex;
   justify-content: center;
-  margin-top: 20vh;
+  /* margin-top: 10vh; */
 }
 
 .viewDetial {
