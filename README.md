@@ -49,6 +49,8 @@ npm install
 npm run dev
 ```
 
+---
+
 ## 網頁展示
 
-<https://wanuii.github.io/shopping-cart/>
+<https://wanuii.github.io/fake-store/>
