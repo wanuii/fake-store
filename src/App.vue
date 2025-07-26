@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import Navbar from '@/components/Navbar.vue'
+import Footer from '@/components/Footer.vue'
 </script>
 
 <template>
-  <Navbar />
-  <div class="router-view-wrapper">
-    <RouterView />
+  <div class="flex flex-col min-h-screen gap-10">
+    <Navbar />
+    <div class="flex-1">
+      <RouterView />
+    </div>
+    <Footer />
   </div>
 </template>
-<style>
-.router-view-wrapper {
-  padding-top: 60px;
-  /* 根據 Navbar 高度設定 */
-}
-</style>

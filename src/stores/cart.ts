@@ -1,32 +1,54 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
+type Product = {
+  Title: string
+  Price: number
+  Images: string
+  ID: number
+  quantity?: number
+  Rate?: number
+}
+type CartProduct = Product & { quantity: number }
+export const useFuncStore = defineStore('cart', {
+  state: () => ({
+    prodspace: [] as CartProduct[],
+    viewedProducts: []as Product[],
+  }),
 
-export const useFuncStore = defineStore('cart', () => {
-  const prodspace = ref<
-    Array<{ Title: string; Price: Number; Images: string; ID: number; quantity: number }>
-  >([]) // 購物車商品
-  // 加入購物車
-  const addPro = (product: {
-    Title: string
-    Price: Number
-    Images: string
-    ID: number
-    quantity: number
-  }) => {
-    const prodExist = prodspace.value.find((p) => p.ID === product.ID)
-    if (prodExist) {
-      prodExist.quantity++
-    } else {
-      prodspace.value.push({ ...product, quantity: 1 })
-    }
-  }
-  // 從購物車刪除
-  const deletePro = (product: { ID: number }) => {
-    const index = prodspace.value.findIndex((p) => p.ID === product.ID)
-    if (index !== -1) {
-      prodspace.value.splice(index, 1)
-    }
-  }
+  actions: {
+    addPro(product: CartProduct) {
+      const existing = this.prodspace.find((p) => p.ID === product.ID)
+      if (existing) {
+        existing.quantity = (existing.quantity ?? 0) + (product.quantity ?? 1)
+      } else {
+        this.prodspace.push({ ...product, quantity: product.quantity || 1 })
+      }
+    },
 
-  return { prodspace, addPro, deletePro }
+    deletePro(product: { ID: number }) {
+      const index = this.prodspace.findIndex((p) => p.ID === product.ID)
+      if (index !== -1) {
+        this.prodspace.splice(index, 1)
+      }
+    },
+    clearCart() {
+      this.prodspace = []
+    },
+    addViewedProduct(product: Product) {
+      const existingIndex = this.viewedProducts.findIndex(p => p.ID === product.ID)
+      if (existingIndex !== -1) {
+        this.viewedProducts.splice(existingIndex, 1) // 移除舊的（讓最新的在最前面）
+      }
+      this.viewedProducts.unshift(product) // 加到最前面
+      if (this.viewedProducts.length > 20) {
+        this.viewedProducts.pop()
+      }
+    }
+  },
+  getters: {
+    totalAmount: (state) =>
+      state.prodspace.reduce((sum, p) => sum + (p.Price || 0) * (p.quantity || 1), 0)
+  },
+  persist: {
+    storage: sessionStorage,
+  }
 })

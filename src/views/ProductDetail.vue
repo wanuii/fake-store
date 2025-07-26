@@ -1,73 +1,112 @@
 <script setup lang="ts">
-import { defineProps, watch, ref } from 'vue';
-import { useFuncStore } from "@/stores/cart.ts";
-
+import { ElNotification } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
+import { watch, ref } from 'vue'
+import { useFuncStore } from '@/stores/cart.ts'
+import ProductCarousel from '@/components/ProductCarousel.vue'
 const cartstore = useFuncStore()
-const props = defineProps({
-    product: {
-        type: Object as () => any,
-        required: true,
-    },
-});
-const product = ref(props.product); // 商品資料
-const state = ref(false); // 關閉狀態
-const emit = defineEmits(['change-dialog-state'])
+const route = useRoute()
+const router = useRouter()
+const product = ref<any>(null)
+const num = ref(1) // 計算商品數量
+const loading = ref(true) // 計算商品數量
+const shopprods = ref<any[]>([]) // 放推薦商品
 // 將商品加入購物車
-const AddToCart = () => {
-    cartstore.addPro(product.value);
-    emit('change-dialog-state', state);  // 傳遞【關閉狀態】，將【商品描述】元件關閉
+const AddToCart = (product: any) => {
+  cartstore.addPro(product)
+  ElNotification({
+    title: '已新增進購物車!',
+    type: 'success'
+  })
 }
-// 監聽是否點擊其他商品
-watch(() => props.product, (newProd, oldProd) => {
-    product.value = newProd
-});
+const backHome = () => {
+  router.push('/')
+}
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (!newId) return
+    loading.value = true
+
+    const res = await fetch(`https://fakestoreapi.com/products/${newId}`)
+    const data = await res.json()
+    product.value = {
+      Title: data.title,
+      Price: data.price,
+      Images: data.image,
+      ID: data.id,
+      Description: data.description,
+      Rate: data.rating.rate,
+      RateCount: data.rating.count,
+      Category: data.category
+    }
+
+    // 抓同類型商品（排除自己）
+    const categoryRes = await fetch(`https://fakestoreapi.com/products/category/${data.category}`)
+    const categoryData = await categoryRes.json()
+    shopprods.value = categoryData
+      .filter((item: any) => item.id !== data.id)
+      .map((item: any) => ({
+        Title: item.title,
+        Price: item.price,
+        Images: item.image,
+        ID: item.id,
+        Description: item.description,
+        Rate: item.rating.rate
+      }))
+
+    cartstore.addViewedProduct({
+      Title: data.title,
+      Price: data.price,
+      Images: data.image,
+      ID: data.id,
+      Rate: data.rating.rate
+    })
+
+    loading.value = false
+  },
+  { immediate: true } // 讓初次進入頁面時也會執行一次
+)
 </script>
 <template>
-    <div class="detail">
-        <img :src="product.Images">
-        <div class="description">
-            <h2>{{ product.Title }}</h2>
-            <h2>NT$ {{ product.Price }}</h2>
-            <h3>{{ product.Description }}</h3>
-        </div>
+  <div class="flex flex-col mt-20 gap-20" v-loading="loading">
+    <div class="flex ml-8 w-28 items-center gap-1 text-[#D9A273] cursor-pointer" @click="backHome">
+      <i class="ri-arrow-go-back-fill"></i>
+      <p class="font-bold">返回首頁</p>
     </div>
-    <button type="button" class="btn" @click="AddToCart()">加入購物車</button>
+    <div class="flex flex-col md:flex-row max-w-4xl mx-auto gap-10 px-4 md:px-10" v-if="product">
+      <img :src="product.Images" class="w-full h-64 object-scale-down" />
+      <div class="flex flex-col gap-3">
+        <p class="text-xl font-bold">{{ product.Title }}</p>
+        <p class="text-xl text-[#D9A273] font-bold">$ {{ product.Price }}</p>
+        <div class="flex items-center gap-2">
+          <p>評價</p>
+          <p>{{ product.Rate }}</p>
+          <el-rate :model-value="product.Rate" disabled />
+          <p>{{ `(${product.RateCount})` }}</p>
+        </div>
+        <div>
+          <p class="text-xl">商品描述</p>
+          <p class="mt-2">{{ product.Description }}</p>
+        </div>
+        <div class="flex gap-3">
+          <el-input-number v-model="num" :min="1" :max="10" />
+          <el-button
+            class="w-36"
+            style="background-color: #d9a273; color: white"
+            @click="AddToCart({ ...product, quantity: num })"
+            >加入購物車</el-button
+          >
+        </div>
+      </div>
+    </div>
+    <hr class="border border-gray-300 mx-24" />
+    <div v-if="!loading" class="flex flex-col max-w-4xl mx-auto gap-20 px-4">
+      <p class="text-xl font-bold">更多你可能喜歡的商品</p>
+      <ProductCarousel :products="shopprods" />
+      <p class="text-xl font-bold">瀏覽紀錄</p>
+      <ProductCarousel :products="cartstore.viewedProducts" />
+    </div>
+  </div>
 </template>
-<style scoped>
-.detail {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    margin-top: 15vh;
-}
-
-img {
-    width: 20vw;
-    height: 20vw;
-    margin: 2vw;
-}
-
-.description {
-    display: flex;
-    width: 60vw;
-    flex-direction: column;
-    text-align: left;
-}
-
-h3 {
-    color: black;
-    text-align: left;
-}
-
-.btn {
-    font-size: large;
-    width: 20vw;
-    height: 3vw;
-    border: none;
-    color: white;
-    background-color: #7A7A7A;
-    position: absolute;
-    bottom: 2vw;
-    right: 2vw;
-}
-</style>
+<style scoped></style>
