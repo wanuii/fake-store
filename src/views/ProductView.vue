@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import FrontCover from '@/components/FrontCover.vue'
 import ProductCard from '@/components/ProductCard.vue'
 
@@ -17,7 +17,8 @@ const shopprods = ref<
   }>
 >([])
 const detial = ref(false) // 判斷是否開啟商品詳細
-let state = 'all' // 商品類別
+let state = ref<'all' | string>('all') // 商品類別
+const allProducts = ref<any[]>([])
 const categoryMap: Record<string, string> = {
   all: '全部',
   electronics: '電子產品',
@@ -26,56 +27,52 @@ const categoryMap: Record<string, string> = {
   "women's clothing": '女裝'
 }
 // =============================================
-// 所有商品
-const onSearch = async (state: string) => {
+// 分類API有問題，圖片顯示錯誤，故不打分類 API
+// 由全部商品動態推導分類清單
+const categories = computed<string[]>(() => {
+  const set = new Set(allProducts.value.map((p) => p.category))
+  return ['all', ...Array.from(set)]
+})
+
+// 只抓一次「全部商品」
+const fetchAllProducts = async () => {
   try {
     loading.value = true
-    shopprods.value = []
-    let res
-    if (state == 'all') {
-      res = await fetch(`https://fakestoreapi.com/products`)
-    } else {
-      res = await fetch(`https://fakestoreapi.com/products/category/${state}`)
-    }
-    const data = await res.json()
-    // 把資料放進shopprods
-    for (let i = 0; i < data.length; i++) {
-      shopprods.value.push({
-        Title: data[i].title,
-        Price: data[i].price,
-        Images: data[i].image,
-        ID: data[i].id,
-        Description: data[i].description,
-        Rate: data[i].rating.rate
-      })
-    }
+    const res = await fetch('https://fakestoreapi.com/products')
+    allProducts.value = await res.json()
   } catch (err) {
     console.log('error', err)
   } finally {
     loading.value = false
   }
 }
-// 商品分類
-const Categories = async () => {
-  try {
-    const res = await fetch(`https://fakestoreapi.com/products/categories`)
-    let data = await res.json()
-    data = ['all', ...data]
-    categories.value = data
-  } catch (err) {
-    console.log('error', err)
-  }
+
+function applyFilter(category: string) {
+  const list =
+    category === 'all'
+      ? allProducts.value
+      : allProducts.value.filter((p) => p.category === category)
+
+  shopprods.value = list.map((p) => ({
+    Title: p.title,
+    Price: p.price,
+    Images: p.image,
+    ID: p.id,
+    Description: p.description,
+    Rate: p.rating?.rate ?? 0
+  }))
 }
-// 選擇【商品分類】查詢
-const onCategoryClick = (category: string) => {
-  state = category
-  onSearch(category)
+
+// 點分類時前端 filter
+function onCategoryClick(category: string) {
+  state.value = category
+  applyFilter(category)
 }
-const categories = ref([])
+
 onMounted(async () => {
-  detial.value = false // 預設不顯示商品描述
-  await Categories()
-  await onSearch(state)
+  detial.value = false
+  await fetchAllProducts()
+  applyFilter('all')
 })
 </script>
 <template>
