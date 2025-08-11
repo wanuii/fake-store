@@ -11,6 +11,14 @@ const product = ref<any>(null)
 const num = ref(1) // 計算商品數量
 const loading = ref(true) // 計算商品數量
 const shopprods = ref<any[]>([]) // 放推薦商品
+const allProducts = ref<any[]>([])
+
+// 獲取全部商品
+async function ensureAllProducts() {
+  if (allProducts.value.length) return
+  const res = await fetch('https://fakestoreapi.com/products')
+  allProducts.value = await res.json()
+}
 // 將商品加入購物車
 const AddToCart = (product: any) => {
   cartstore.addPro(product)
@@ -41,20 +49,21 @@ watch(
       Category: data.category
     }
 
+    await ensureAllProducts()
     // 抓同類型商品（排除自己）
-    const categoryRes = await fetch(`https://fakestoreapi.com/products/category/${data.category}`)
-    const categoryData = await categoryRes.json()
-    shopprods.value = categoryData
-      .filter((item: any) => item.id !== data.id)
-      .map((item: any) => ({
-        Title: item.title,
-        Price: item.price,
-        Images: item.image,
-        ID: item.id,
-        Description: item.description,
-        Rate: item.rating.rate
+    const rec = allProducts.value
+      .filter((p) => p.category === data.category && p.id !== data.id)
+      .map((p) => ({
+        Title: p.title,
+        Price: p.price,
+        Images: p.image, // 這裡來自 /products，全都能顯示
+        ID: p.id,
+        Description: p.description,
+        Rate: p.rating.rate
       }))
 
+    shopprods.value = rec
+    // 瀏覽紀錄
     cartstore.addViewedProduct({
       Title: data.title,
       Price: data.price,
