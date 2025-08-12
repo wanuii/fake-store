@@ -5,10 +5,19 @@
     <link rel="icon" href="/fake-store/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
-    <script type="module" crossorigin src="/fake-store/assets/index-BwbAzdWT.js"></script>
+    <script type="module" crossorigin src="/fake-store/assets/index-DN86Ixtm.js"></script>
     <link rel="stylesheet" crossorigin href="/fake-store/assets/index-B_k-cEWr.css">
   </head>
   <body>
     <div id="app"></div>
   </body>
 </html>
+<script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var redirect = params.get('redirect');
+    if (redirect) {
+      history.replaceState(null, null, redirect);
+    }
+  })();
+</script>
