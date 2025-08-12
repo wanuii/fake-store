@@ -35,6 +35,7 @@ watch(
   async (newId) => {
     if (!newId) return
     loading.value = true
+    num.value = 1 // 重設商品數量
 
     const res = await fetch(`https://fakestoreapi.com/products/${newId}`)
     const data = await res.json()

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+        // 把目前路徑塞回 index.html 的 query，稍後由 index.html 還原
+        var repo = '/fake-store';
+        var path = location.pathname.replace(new RegExp('^' + repo), '');
+        location.replace(repo + '/index.html?redirect=' + encodeURIComponent(path + location.search + location.hash));
+    </script>
+</head>
+
+<body>Redirecting…</body>
+
+</html>
