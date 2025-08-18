@@ -8,6 +8,9 @@ type Product = {
   Rate?: number
 }
 type CartProduct = Product & { quantity: number }
+type State = { prodspace: CartProduct[]; viewedProducts: Product[] }
+const toCents = (n: number | undefined) =>
+  Math.round(((n ?? 0) + Number.EPSILON) * 100)
 export const useFuncStore = defineStore('cart', {
   state: () => ({
     prodspace: [] as CartProduct[],
@@ -45,8 +48,15 @@ export const useFuncStore = defineStore('cart', {
     }
   },
   getters: {
-    totalAmount: (state) =>
-      state.prodspace.reduce((sum, p) => sum + (p.Price || 0) * (p.quantity || 1), 0)
+    // 只寫 state 一個參數，並標注型別避免 implicit any
+    totalAmountCents: (state: State): number =>
+      state.prodspace.reduce<number>(
+        (sum, p) => sum + toCents(p.Price) * (p.quantity ?? 1),
+        0
+      ),
+    totalAmount(): number {
+      return this.totalAmountCents / 100
+    },
   },
   persist: {
     storage: sessionStorage,
